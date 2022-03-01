@@ -1,0 +1,73 @@
+﻿@{
+    ViewData["Title"] = "Home Screen";
+}
+<style>
+    html, body {
+        height: 100%;
+        background-color: #FBFF12;
+        font-family: 'Baloo Tammudu 2', cursive;
+        color: #0C0F0A;
+    }
+
+    .container {
+        position: relative;
+        height: 100%;
+        width: 800px;
+    }
+</style>
+<div class="container noselect">
+    <div class="vertical-center">
+        <h1 class="titlehead">Painting with pals</h1>
+        <div class="col-md-12">
+            <div class="row text-center">
+                <div class="col-md-2"></div>
+                <div class="col-md-4"><input type="button" class="btn btn-xlg btn-pink" value="Create room" id="btnCreateRoom" /></div>
+                <div class="col-md-4"><input type="button" class="btn btn-xlg btn-blue" value="Join room" id="btnJoinRoom" /></div>
+                <div class="col-md-2"></div>
+            </div>
+            <br />
+            <div class="row text-center">
+                <div class="col-md-2"></div>
+                <div class="col-md-8">Click 'm' to open the brush menu</div>
+                <div class="col-md-2"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $('#btnCreateRoom').on('click', createRoom);
+        $('#btnJoinRoom').on('click', joinRoom);
+        function joinRoom() {
+            let roomCode = prompt('Please enter the room code:');
+            if (!roomCode || roomCode.trim() == '')
+                return;
+            roomCode = roomCode.split(' ').join('-');
+            redirectToRoom(roomCode)
+        }
+        async function createRoom() {
+            let roomCode = await generateRoomCode();
+            redirectToRoom(roomCode)
+        }
+
+        function redirectToRoom(roomCode) {
+            window.location.pathname = '/room/' + roomCode;
+        }
+
+        //async function generateRoomCode() {
+        //    let result = await $.ajax({
+        //        url: 'https://random-word-api.herokuapp.com/word?number=2',
+        //        type: 'GET'
+        //    });
+        //    return result.join('-');
+        //}
+
+        async function generateRoomCode() {
+            let lines = (await $.ajax({ url: 'https://raw.githubusercontent.com/0301/ordliste/master/ordliste_snl_fellesord.txt', type: 'GET' })).split('\n');
+            let word = lines[Math.floor((Math.random() * lines.length) + 1)] + '-' + lines[Math.floor((Math.random() * lines.length) + 1)];
+            return word;
+        }
+
+    </script>
+}
